@@ -1,0 +1,36 @@
+name: Run on any Push event
+
+on:
+  push:
+    branches: 
+     - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python version
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.10.12'
+          
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        
+      - name: test
+        run: cd src && pytest
+
+      - name: mypy
+        run: mypy .
+        
+      - name: black
+        run: black --diff --check .
+        
+      - name: isort
+        run: isort --check-only .
+        
+      - name: flake8
+        run: flake8 .
