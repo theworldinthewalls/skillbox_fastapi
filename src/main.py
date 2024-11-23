@@ -33,18 +33,18 @@ async def get_recipes() -> List[Summary]:
 
 
 @app.get("/recipes/<int:id>", response_model=Union[RecipeRead | Dict])
-async def get_recipe(recipe_id: int):
-    result = await session.execute(select(Recipe).where(Recipe.id == recipe_id))
+async def get_recipe(rec_id: int):
+    result = await session.execute(select(Recipe).where(Recipe.id == rec_id))
     recipe = result.one_or_none()
     if recipe:
         views = {"views": recipe[0].views + 1}
         await session.execute(
-            update(Recipe).where(Recipe.id == recipe_id).values(views)
+            update(Recipe).where(Recipe.id == rec_id).values(views)
         )
         return recipe[0]
     else:
         raise HTTPException(
-            status_code=404, detail="The server can't find the requested resource"
+            status_code=404, detail="The requested resource is not available"
         )
 
 
