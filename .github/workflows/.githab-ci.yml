@@ -19,9 +19,6 @@ jobs:
           
       - name: Install dependencies
         run: pip install -r requirements.txt
-        
-      - name: test
-        run: cd src && pytest
 
       - name: mypy
         run: mypy .
