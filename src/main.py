@@ -38,9 +38,8 @@ async def get_recipe(rec_id: int):
     recipe = result.one_or_none()
     if recipe:
         views = {"views": recipe[0].views + 1}
-        await session.execute(
-            update(Recipe).where(Recipe.id == rec_id).values(views)
-        )
+        query = update(Recipe).where(Recipe.id == rec_id).values(views)
+        await session.execute(query)
         return recipe[0]
     else:
         raise HTTPException(
