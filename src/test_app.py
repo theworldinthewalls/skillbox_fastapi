@@ -1,13 +1,18 @@
 from json import loads
 
 from fastapi.testclient import TestClient
+import pytest
 
 from main import app
 
-client = TestClient(app)
+
+@pytest.fixture
+def client():
+    with TestClient(app) as c:
+        yield c
 
 
-def test_add_recipe():
+def test_add_recipe(client):
     data = {
         "name": "apple pie",
         "time": 90,
@@ -19,7 +24,7 @@ def test_add_recipe():
     assert loads(response.text) == data
 
 
-def test_get_recipes() -> None:
+def test_get_recipes(client) -> None:
     response = client.get("/recipes")
     response_json = loads(response.text)
     assert response.status_code == 200
@@ -27,13 +32,13 @@ def test_get_recipes() -> None:
     assert isinstance(response_json[0], dict)
 
 
-def test_get_recipe():
+def test_get_recipe(client):
     response = client.get("/recipes/<int:id>?rec_id=1")
     assert response.status_code == 200
     assert isinstance(loads(response.text), dict)
 
 
-def test_get_recipe_failed():
+def test_get_recipe_failed(client):
     response = client.get("/recipes/<int:id>?rec_id=10")
     response_json = loads(response.text)
     assert response.status_code == 404
