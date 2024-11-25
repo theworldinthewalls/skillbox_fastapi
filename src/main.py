@@ -5,9 +5,9 @@ from fastapi import FastAPI, HTTPException
 from sqlalchemy import desc, update
 from sqlalchemy.future import select
 
-from src.database import engine, session
-from src.models import Base, Recipe
-from src.schemas import RecipeCreate, RecipeRead, Summary
+from database import engine, session
+from models import Base, Recipe
+from schemas import RecipeCreate, RecipeRead, Summary
 
 
 @asynccontextmanager
@@ -52,4 +52,5 @@ async def add_recipe(data: RecipeCreate) -> Recipe:
     recipe = Recipe(**data.model_dump())
     async with session:
         session.add(recipe)
+        await session.commit()
     return recipe
